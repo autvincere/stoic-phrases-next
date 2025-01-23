@@ -2,18 +2,27 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
-
+1. Clonar el repositorio
+2. Renombrar el archivo `.env.template` a `.env` y cambiar las variables de entorno.
+2. Levantar la base de datos
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+docker compose up -d
 ```
-
+3. construir imagen de nextjs en docker: 
+```bash
+docker build -t next-postgre .
+```
+4. correr el contenedor:
+```bash
+docker container run -dp 3000:3000 next-postgre
+```
+5. visitar la url: [http://localhost:3000](http://localhost:3000)
+6.  bajar el contenedor:
+```bash
+docker container stop next-postgre
+```
+if this not working use container_id.
+7.
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
