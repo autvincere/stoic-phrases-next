@@ -1,6 +1,6 @@
 //rag
 import { NextResponse } from "next/server";
-import { pool } from "../../../../db.js";
+import { pool } from "../../../../db";
 
 export async function GET() {
   try {
