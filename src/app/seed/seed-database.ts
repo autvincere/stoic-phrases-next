@@ -8,8 +8,8 @@ import path from "path";
 
 // import { connectDatabaseTest } from '../utils';
 
-import { pool } from "../../../db.ts";
-import cloudinary from "../../../cloudinaryConfig.ts";
+import { pool } from "../../../db.js";
+import cloudinary from "../../../cloudinaryConfig.js";
 import phrases from "./phrases.json";
 
 // connectDatabaseTest(pool);
