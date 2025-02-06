@@ -1,13 +1,29 @@
 "use client";
 import { useState } from "react";
+
+import styles from "./Card.module.css";
+
 interface IPhrase {
   phrase: string;
   author: string;
+  image_url: string;
 }
+
 
 const Card = ({ phrase = null }) => {
   const [phrases, setPhrases] = useState<IPhrase | null>(phrase);
   const [loading, setLoading] = useState(false);
+
+  const formatPhrase = (phrase: string) => {
+    // Dividir la frase en segmentos por '.' o '?'
+    const segments = phrase.split(/(?<=[.?])/g).filter(Boolean);
+
+    return segments.map((segment, index) => (
+      <h2 key={index} className={styles.phrase__segment}>
+        {segment.trim()}
+      </h2>
+    ));
+  };
 
   const fetchNewPhrase = async () => {
     setLoading(true);
@@ -24,11 +40,14 @@ const Card = ({ phrase = null }) => {
 
   // console.log("phrases", phrases?.text)
   return (
-    <div className="bkg card__container">
+    <div
+      className={styles.card__container}
+      style={{ backgroundImage: `url(${phrases?.image_url})` }}
+    >
       {phrases !== null ? (
         <>
-          <h2 className="phrase">{phrases.phrase}</h2>
-          <p>{phrases.author}</p>
+          <div className={styles.phrase}>{formatPhrase(phrases.phrase)}</div>
+          <p className={styles.phrase__author}>{phrases.author}</p>
         </>
       ) : (
         ""
@@ -37,16 +56,7 @@ const Card = ({ phrase = null }) => {
       <button
         onClick={fetchNewPhrase}
         type="submit"
-        style={{
-          padding: "10px 20px",
-          marginTop: "20px",
-          fontSize: "16px",
-          backgroundColor: "#0070f3",
-          color: "white",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
-        }}
+        className={styles.phrase__next_button}
       >
         Otra frase
       </button>
