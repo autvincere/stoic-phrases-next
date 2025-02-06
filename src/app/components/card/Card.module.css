@@ -1,48 +1,59 @@
-.card{
-
+.card {
 }
 
-.card__container{
-     display: flex;
-     flex-direction: column;
-     justify-content: center;
-     align-items: center;
-     height: 100vh;
-     background-size: cover;
-     background-position: center;
-     background-repeat: no-repeat;
-   }
+.card__container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
 
-   .phrase{
-     margin: 14px;
-     text-align: center;
-   }
+.phrase {
+  margin: 14px;
+  text-align: center;
+}
 
-   .phrase__segment{
-    font-family: var(--font-montserrat), sans-serif;
-    font-size: 1.5rem;
-    font-weight: 600;
-    /* color: var(--color-white); */
-    color: white;
-    display: block; 
-    margin-bottom: 0.5em;
-   }
+.phrase__segment {
+  font-family: var(--font-montserrat), sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  /* color: var(--color-white); */
+  color: white;
+  display: block;
+  margin-bottom: 0.5em;
+}
 
-   .phrase__author{
-    font-family: var(--font-crimson-pro), sans-serif;
-    font-size: 1.5rem;
-    font-weight: 500;
-    color: white;
-    margin: 0;
-   }
+.phrase__author {
+  font-family: var(--font-crimson-pro), sans-serif;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: white;
+  margin: 0;
+}
 
-   .phrase__next_button{
-    padding: 10px 20px;
-    margin-top: 20px;
-    font-size: 16px;
-    background-color: #0070f3;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-   }
+.phrase__next_button {
+  padding: 10px 20px;
+  margin-top: 20px;
+  font-size: 16px;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.circular_gradient {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, #0000 0%, #2b2b2bcc 80%);
+  z-index: -1;
+}

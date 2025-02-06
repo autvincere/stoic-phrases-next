@@ -9,7 +9,6 @@ interface IPhrase {
   image_url: string;
 }
 
-
 const Card = ({ phrase = null }) => {
   const [phrases, setPhrases] = useState<IPhrase | null>(phrase);
   const [loading, setLoading] = useState(false);
@@ -42,7 +41,7 @@ const Card = ({ phrase = null }) => {
   return (
     <div
       className={styles.card__container}
-      style={{ backgroundImage: `url(${phrases?.image_url})` }}
+      style={{ backgroundImage: `radial-gradient(circle, #0000 0%, #2b2b2bcc 80%), url(${phrases?.image_url})` }}
     >
       {phrases !== null ? (
         <>
