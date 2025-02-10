@@ -10,7 +10,6 @@ export async function GET() {
     if (result.rows.length === 0) {
       return NextResponse.json({ message: "No phrases available" }, { status: 404 });
     }
-
     return NextResponse.json(result.rows[0], { status: 200 });
   } catch (error: unknown) {
     if (error instanceof Error) {

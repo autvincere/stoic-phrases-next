@@ -3,6 +3,9 @@ import { useState } from "react";
 
 import styles from "./Card.module.css";
 
+const FALLBACK_IMAGE = "/bkg_fallback.jpg";
+
+
 interface IPhrase {
   phrase: string;
   author: string;
@@ -37,11 +40,12 @@ const Card = ({ phrase = null }) => {
     }
   };
 
-  // console.log("phrases", phrases?.text)
+const imageUrl = phrases?.image_url || FALLBACK_IMAGE;
+
   return (
     <div
       className={styles.card__container}
-      style={{ backgroundImage: `radial-gradient(circle, #0000 0%, #2b2b2bcc 80%), url(${phrases?.image_url})` }}
+      style={{ backgroundImage: `radial-gradient(circle, #0000 0%, #2b2b2bcc 80%), url(${imageUrl})` }}
     >
       {phrases !== null ? (
         <>
