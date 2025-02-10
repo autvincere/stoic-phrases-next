@@ -32,7 +32,7 @@ const Card = ({ phrase = null }) => {
   const fetchNewPhrase = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/phrases`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}api/phrases`);
       const data = await response.json();
       setPhrases(data);
     } catch (error) {

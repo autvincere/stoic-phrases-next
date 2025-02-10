@@ -6,7 +6,7 @@ const HomePage = async () => {
   const apiUrl = process.env.API_URL;
 
   try {
-    const data = await fetch(`${apiUrl}/api/phrases`, { cache: "no-store" });
+    const data = await fetch(`${apiUrl}api/phrases`, { cache: "no-store" });
 
     if (!data.ok) {
       console.log("Error data: ", data);
