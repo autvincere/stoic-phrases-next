@@ -16,23 +16,25 @@ const Card = ({ phrase = null }) => {
   const [phrases, setPhrases] = useState<IPhrase | null>(phrase);
   const [loading, setLoading] = useState(false);
 
-  const formatPhrase = (phrase: string) => {
-    // Dividir la frase en segmentos por '.' o '?'
-    const segments = phrase.split(/(?<=[.?])/g).filter(Boolean);
-
-    return segments.map((segment, index) => (
-      <h2 key={index} className={styles.phrase__segment}>
-        {segment.trim()}
-      </h2>
-    ));
-  };
+    const formatPhrase = (phrase?: string) => {
+      if (!phrase) return <h2 className={styles.phrase__segment}>Frase no disponible</h2>;
+    
+      const segments = phrase.split(/(?<=[.?])/g).filter(Boolean);
+    
+      return segments.map((segment, index) => (
+        <h2 key={index} className={styles.phrase__segment}>
+          {segment.trim()}
+        </h2>
+      ));
+    };
+    
   
  console.log('process: ', process.env.NEXT_PUBLIC_API_URL + '/api/phrases')
 
   const fetchNewPhrase = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}api/phrases`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/phrases`);
       const data = await response.json();
       setPhrases(data);
     } catch (error) {

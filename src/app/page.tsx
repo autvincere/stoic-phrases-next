@@ -2,26 +2,23 @@ import Card from "../app/components/card/Card";
 
 const HomePage = async () => {
   let phrase = null;
-
-  const apiUrl = process.env.API_URL;
+  const apiUrl = process.env.API_URL || "http://localhost:3000";
 
   try {
-    const data = await fetch(`${apiUrl}api/phrases`, { cache: "no-store" });
+    const data = await fetch(`${apiUrl}/api/phrases`, { cache: "no-store" });
 
     if (!data.ok) {
-      console.log("Error data: ", data);
       throw new Error(`HTTP error! status: ${data.status}`);
     }
 
     phrase = await data.json();
-    console.log("phrase: ", phrase);
   } catch (error) {
-    console.log(error instanceof Error ? error.message : "An error occurred");
+    console.log("Error obteniendo la frase:", error);
   }
 
   return (
     <main>
-      <Card phrase={phrase} />
+      <Card phrase={phrase || { phrase: "Frase de prueba", author: "Desconocido", image_url: "" }} />
     </main>
   );
 };
