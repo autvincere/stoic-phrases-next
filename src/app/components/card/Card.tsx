@@ -9,7 +9,7 @@ const FALLBACK_IMAGE = "/bkg_fallback.jpg";
 interface IPhrase {
   phrase: string;
   author: string;
-  image_url: string;
+  image_url?: string;
 }
 
 const Card = ({ phrase = null }) => {
