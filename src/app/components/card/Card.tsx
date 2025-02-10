@@ -26,11 +26,13 @@ const Card = ({ phrase = null }) => {
       </h2>
     ));
   };
+  
+ console.log('process: ', process.env.NEXT_PUBLIC_URL + '/api/phrases')
 
   const fetchNewPhrase = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:3000/api/phrases");
+      const response = await fetch(process.env.NEXT_PUBLIC_URL + '/api/phrases');
       const data = await response.json();
       setPhrases(data);
     } catch (error) {
