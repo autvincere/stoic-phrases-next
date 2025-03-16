@@ -15,7 +15,7 @@ interface IPhrase {
 const Card = ({ phrase = null }) => {
   const [phrases, setPhrases] = useState<IPhrase | null>(phrase);
   const [loading, setLoading] = useState(false);
-
+console.log('phrases: ', phrases)
     const formatPhrase = (phrase?: string) => {
       if (!phrase) return <h2 className={styles.phrase__segment}>Frase no disponible</h2>;
     

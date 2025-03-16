@@ -3,11 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
+    "dev": "NODE_ENV=development next dev --turbopack",
+    "build": "NODE_ENV=production next build",
+    "start": "NODE_ENV=production next start",
     "lint": "next lint",
-    "populate": "ts-node src/app/seed/seed-database.ts"
+    "populate-dev": "NODE_ENV=development ts-node src/app/seed/seed-database.ts",
+    "populate-prod": "NODE_ENV=production ts-node src/app/seed/seed-database.ts"
+
   },
   "dependencies": {
     "cloudinary": "^2.5.1",

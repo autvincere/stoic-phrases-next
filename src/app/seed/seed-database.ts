@@ -2,17 +2,21 @@
  * * Mandatory
  */
 import dotenv from "dotenv";
-dotenv.config(); // Cargar variables de entorno
-
+console.log("Entorno actual:", process.env.NODE_ENV);
+dotenv.config({
+  path:
+    process.env.NODE_ENV === "development"
+      ? "./.env.local"
+      : "./.env.production",
+});
 import path from "path";
 
-// import { connectDatabaseTest } from '../utils';
+// import { connectDatabaseTest } from "../utils";
 
-import { pool } from "../../../db.js";
-import cloudinary from "../../../cloudinaryConfig.js";
+import { pool } from "../../../db";
+import cloudinary from "../../../cloudinaryConfig";
 import phrases from "./phrases.json";
 
-// connectDatabaseTest(pool);
 interface Phrase {
   author: string;
   phrase: string;
@@ -27,7 +31,7 @@ interface CloudinaryImageResource {
 
 // Función para buscar una imagen en Cloudinary
 async function findImageInCloudinary(
-    fileName: string
+  fileName: string
 ): Promise<CloudinaryImageResource | null> {
   try {
     const result = await cloudinary.search
@@ -41,8 +45,7 @@ async function findImageInCloudinary(
       console.log("No se encontró la imagen en Cloudinary.");
     }
 
-      return null;
-      
+    return null;
   } catch (error) {
     console.error("Error buscando la imagen en Cloudinary:", error);
     return null;
@@ -53,15 +56,15 @@ async function uploadImageToCloudinary(
   imagePath: string
 ): Promise<string | null> {
   try {
-      // 1. Calcular el hash de la imagen
-      const imageRoute: string = String(__dirname + imagePath);
-      console.log("imageRoute:", imageRoute);
-      const filename = path.basename(imageRoute, path.extname(imageRoute));
+    // 1. Calcular el hash de la imagen
+    const imageRoute: string = String(__dirname + imagePath);
+    console.log("imageRoute:", imageRoute);
+    const filename = path.basename(imageRoute, path.extname(imageRoute));
     console.log("filename:", filename);
 
     // 2. Buscar si ya existe una imagen con este hash en Cloudinary
     const existingImage = await findImageInCloudinary(filename);
-      
+
     if (existingImage) {
       console.log("Imagen ya existe en Cloudinary:", existingImage.secure_url);
       return existingImage.secure_url; // Retorna la URL de la imagen existente
@@ -121,11 +124,13 @@ async function populateDatabase(): Promise<void> {
 
     // Poblar la tabla 'phrases' con los datos
     for (const { author, phrase, imagePath } of phrases as Phrase[]) {
-        const imageUrl = await uploadImageToCloudinary(imagePath);
-        if (!imageUrl) {
-            console.warn(`Saltando la frase debido a un error al subir la imagen: ${imagePath}`);
-            continue; // Continúa con la siguiente frase si no hay URL
-        }
+      const imageUrl = await uploadImageToCloudinary(imagePath);
+      if (!imageUrl) {
+        console.warn(
+          `Saltando la frase debido a un error al subir la imagen: ${imagePath}`
+        );
+        continue; // Continúa con la siguiente frase si no hay URL
+      }
 
       await pool.query(
         `INSERT INTO phrases (author, phrase, image_url) VALUES ($1, $2, $3)`,
@@ -153,4 +158,5 @@ async function populateDatabase(): Promise<void> {
   }
 }
 
-populateDatabase();
+populateDatabase()
+// connectDatabaseTest(pool);
