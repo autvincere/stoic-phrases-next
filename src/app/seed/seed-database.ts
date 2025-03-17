@@ -104,7 +104,13 @@ async function populateDatabase(): Promise<void> {
     console.log(
       "Inicializando el proceso de creación de tabla y población de datos..."
     );
-
+    console.log({
+      DB_USER: process.env.DB_USER,
+      DB_HOST: process.env.DB_HOST,
+      DB_NAME: process.env.DB_NAME,
+      DB_PASSWORD: process.env.DB_PASSWORD,
+      DB_PORT: process.env.DB_PORT,
+    });
     // Crear o recrear la tabla 'phrases'
     await pool.query(`
              DO $$
@@ -150,13 +156,6 @@ async function populateDatabase(): Promise<void> {
       "Error durante la ejecución del script:",
       error instanceof Error ? error.message : error
     );
-    console.log({
-      DB_USER: process.env.DB_USER,
-      DB_HOST: process.env.DB_HOST,
-      DB_NAME: process.env.DB_NAME,
-      DB_PASSWORD: process.env.DB_PASSWORD,
-      DB_PORT: process.env.DB_PORT,
- });
     process.exit(1);
   } finally {
     // Cierra el pool antes de salir
@@ -165,5 +164,5 @@ async function populateDatabase(): Promise<void> {
   }
 }
 
-populateDatabase()
+populateDatabase();
 // connectDatabaseTest(pool);
