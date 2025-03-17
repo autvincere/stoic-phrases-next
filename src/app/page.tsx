@@ -2,7 +2,7 @@ import Card from "../app/components/card/Card";
 export const dynamic = "force-dynamic";
 const HomePage = async () => {
   let phrase = null;
-  const apiUrl = process.env.API_URL || "http://localhost:3000";
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
   try {
     const data = await fetch(`${apiUrl}/api/phrases`, { cache: "no-store" });

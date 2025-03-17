@@ -29,7 +29,7 @@ console.log('phrases: ', phrases)
     };
     
   
- console.log('process: ', process.env.NEXT_PUBLIC_API_URL + '/api/phrases')
+ console.log('link NEXT_PUBLIC_API_URL: ', process.env.NEXT_PUBLIC_API_URL + '/api/phrases')
 
   const fetchNewPhrase = async () => {
     setLoading(true);
