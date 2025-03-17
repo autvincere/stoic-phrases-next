@@ -1,5 +1,5 @@
 import Card from "../app/components/card/Card";
-
+export const dynamic = "force-dynamic";
 const HomePage = async () => {
   let phrase = null;
   const apiUrl = process.env.API_URL || "http://localhost:3000";
