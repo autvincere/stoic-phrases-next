@@ -1,30 +1,37 @@
 import { NextRequest, NextResponse } from "next/server";
 import { pool } from "../../../../db";
 
+const allowedOrigin = process.env.NEXT_PUBLIC_FRONTEND_URL || "*";
+
 export async function GET(req: NextRequest) {
   try {
-    // Agregar CORS permitiendo tu dominio en producción
-    const origin = req.headers.get("origin");
-    const response = NextResponse.json(await getRandomPhrase());
+    console.log('GET method detoned:', req.method, req.headers);
+    // Obtener una frase aleatoria
+    const phrase = await getRandomPhrase();
 
-    response.headers.set("Access-Control-Allow-Origin", origin || "*");
-    response.headers.set("Access-Control-Allow-Methods", "GET, OPTIONS");
-    response.headers.set("Access-Control-Allow-Headers", "Content-Type");
+    const response = NextResponse.json(phrase, {
+      headers: {
+        "Access-Control-Allow-Origin": allowedOrigin,
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+      },
+    });
 
     return response;
   } catch (error: unknown) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Unknown error" },
-      { status: 400 }
+      { status: 400, headers: { "Access-Control-Allow-Origin": allowedOrigin } }
     );
   }
 }
 
 // ✅ Manejar las solicitudes preflight (CORS)
 export function OPTIONS(req: NextRequest) {
+  console.log('OPTIONS request received:', req.method, req.headers);
   return NextResponse.json({}, {
     headers: {
-      "Access-Control-Allow-Origin": req.headers.get("origin") || "*",
+      "Access-Control-Allow-Origin": allowedOrigin,
       "Access-Control-Allow-Methods": "GET, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
     },
