@@ -101,6 +101,8 @@ async function uploadImageToCloudinary(
 
 async function populateDatabase(): Promise<void> {
   try {
+    console.log("Entorno actual:", process.env.NODE_ENV);
+    console.log("DB_USER:",process.env.DB_USER);
     console.log({
       DB_USER: process.env.DB_USER,
       DB_HOST: process.env.DB_HOST,
