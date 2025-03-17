@@ -101,9 +101,6 @@ async function uploadImageToCloudinary(
 
 async function populateDatabase(): Promise<void> {
   try {
-    console.log(
-      "Inicializando el proceso de creación de tabla y población de datos..."
-    );
     console.log({
       DB_USER: process.env.DB_USER,
       DB_HOST: process.env.DB_HOST,
@@ -111,6 +108,9 @@ async function populateDatabase(): Promise<void> {
       DB_PASSWORD: process.env.DB_PASSWORD,
       DB_PORT: process.env.DB_PORT,
     });
+    console.log(
+      "Inicializando el proceso de creación de tabla y población de datos..."
+    );
     // Crear o recrear la tabla 'phrases'
     await pool.query(`
              DO $$
