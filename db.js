@@ -18,7 +18,7 @@ const dbConfig = {
   //ssl: isProduction ? false : false, // Cambia esto a false si el servidor no admite SSL
   ssl: isProduction ? { rejectUnauthorized: false } : false, // Habilitar SSL en producción
 };
-// console.log("🔍 Conectando a la base de datos con la siguiente configuración:");
-// console.log(dbConfig);
+console.log("🔍 Conectando a la base de datos con la siguiente configuración:");
+console.log(dbConfig);
 
 export const pool = new Pool(dbConfig);
