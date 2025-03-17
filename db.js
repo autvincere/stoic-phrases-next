@@ -8,7 +8,7 @@ const dbConfig = {
   database: process.env.DB_NAME,
   password: process.env.DB_PASSWORD,
   port: Number(process.env.DB_PORT),
-  ssl: isProduction ? { rejectUnauthorized: false } : false,
+  ssl: isProduction ? false : false, // Cambia esto a false si el servidor no admite SSL
 };
 
 export const pool = new Pool(dbConfig);
