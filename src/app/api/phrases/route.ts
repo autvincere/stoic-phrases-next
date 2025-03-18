@@ -3,33 +3,12 @@ import { pool } from "../../../../db";
 
 const allowedOrigin = process.env.NEXT_PUBLIC_FRONTEND_URL || "*";
 
-export async function GET(req: NextRequest) {
-  try {
-    console.log('GET method detoned:', req.method, req.headers);
-    // Obtener una frase aleatoria
-    const phrase = await getRandomPhrase();
-
-    const response = NextResponse.json(phrase, {
-      headers: {
-        "Access-Control-Allow-Origin": allowedOrigin,
-        "Access-Control-Allow-Methods": "GET, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type",
-      },
-    });
-
-    return response;
-  } catch (error: unknown) {
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Unknown error" },
-      { status: 400, headers: { "Access-Control-Allow-Origin": allowedOrigin } }
-    );
-  }
-}
-
-// ✅ Manejar las solicitudes preflight (CORS)
-export function OPTIONS(req: NextRequest) {
-  console.log('OPTIONS request received:', req.method, req.headers);
-  return NextResponse.json({}, {
+/**
+ * Función utilitaria para configurar la respuesta con CORS.
+ */
+function createResponse(data: unknown, status: number = 200) {
+  return NextResponse.json(data, {
+    status,
     headers: {
       "Access-Control-Allow-Origin": allowedOrigin,
       "Access-Control-Allow-Methods": "GET, OPTIONS",
@@ -38,8 +17,42 @@ export function OPTIONS(req: NextRequest) {
   });
 }
 
+export async function GET(req: NextRequest) {
+  try {
+    const searchParams = req.nextUrl.searchParams;
+    const all = searchParams.get("all");
+
+    console.log("Query params:", searchParams.toString());
+
+    if (all !== null) {
+      console.log("Getting all phrases");
+      const phrases = await getAllPhrases();
+      return createResponse(phrases);
+    }
+
+    console.log("Getting a random phrase");
+    const phrase = await getRandomPhrase();
+    return createResponse(phrase);
+
+  } catch (error: unknown) {
+    return createResponse(
+      { error: error instanceof Error ? error.message : "Unknown error" },
+      400
+    );
+  }
+}
+
+// ✅ Manejar solicitudes preflight (CORS)
+export function OPTIONS() {
+  return createResponse({});
+}
+
 async function getRandomPhrase() {
   const result = await pool.query("SELECT * FROM phrases ORDER BY RANDOM() LIMIT 1");
-  if (result.rows.length === 0) throw new Error("No phrases available");
-  return result.rows[0];
+  return result.rows[0] || null;
+}
+
+async function getAllPhrases() {
+  const result = await pool.query("SELECT * FROM phrases");
+  return result.rows;
 }
