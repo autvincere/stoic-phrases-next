@@ -1,10 +1,3 @@
-
---margin-bottom: 6vh;
-
-
-.card {
-}
-
 .card__container {
   display: flex;
   flex-direction: column;
@@ -15,10 +8,11 @@
   background-position: center;
   background-repeat: no-repeat;
   position: relative;
+  justify-content: center;
 }
 
 .phrase {
-  margin-bottom: var(--margin-bottom);
+  margin-bottom: var(--card-margin-bottom);
 }
 
 .phrase__segment {
@@ -30,7 +24,7 @@
   text-align: center;
   display: block;
   margin: 0%;
-  margin-bottom: var(--margin-bottom);
+  margin-bottom: var(--card-margin-bottom);
 }
 
 .phrase__author {
@@ -39,7 +33,7 @@
   font-weight: 500;
   color: white;
   margin: 0;
-  margin-bottom:var(--margin-bottom);
+  margin-bottom:var(--card-margin-bottom);
 }
 
 .phrase__next_button {

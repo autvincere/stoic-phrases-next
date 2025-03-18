@@ -29,7 +29,7 @@ console.log('phrases: ', phrases)
     };
     
   
- console.log('link NEXT_PUBLIC_API_URL: ', process.env.NEXT_PUBLIC_API_URL + '/api/phrases')
+ console.log('link', process.env.NEXT_PUBLIC_API_URL + '/api/phrases')
 
   const fetchNewPhrase = async () => {
     setLoading(true);
@@ -48,7 +48,7 @@ const imageUrl = phrases?.image_url || FALLBACK_IMAGE;
 
   return (
     <div
-      className={styles.card__container}
+      className={`card ${styles.card__container}`}
       style={{ backgroundImage: `radial-gradient(circle, #0000 0%, #2b2b2bcc 80%), url(${imageUrl})` }}
     >
       {phrases !== null ? (
