@@ -22,20 +22,18 @@ describe("API Phrases Tests", () => {
       }
     });
 
-    // it('debería obtener una frase del endpoint correcto', async () => {
-    //   try {
-    //     const response = await request("http://localhost:3000").get('/api/phrases');
-    //     console.log('Respuesta del endpoint correcto:', response.status, response.body);
-    //     expect(response.status).toBe(200);
-    //     expect(response.body).toHaveProperty('id');
-    //   } catch (error) {
-    //     console.error('Error al probar el endpoint correcto:', error);
-    //     throw error;
-    //   }
-    // });
+    it('debería obtener una frase del endpoint correcto', async () => {
+      try {
+        const response = await request("http://localhost:3000").get('/api/phrases');
+        console.log('Respuesta del endpoint correcto:', response.status, response.body);
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty('id');
+      } catch (error) {
+        console.error('Error al probar el endpoint correcto:', error);
+        throw error;
+      }
+    });
   });
-
-  // Tests que funcionan en cualquier entorno (incluyendo CI)
   // describe("Unit tests (work in any environment)", () => {
   //   it("debería obtener una frase aleatoria", async () => {
   //     const req = new NextRequest("http://localhost:3000/api/phrases");
