@@ -12,7 +12,6 @@ describe("API Phrases Tests", () => {
     console.log('process.env.CI', process.env.CI);
     console.log('process.env.VERCEL', process.env.VERCEL);
     console.log('process.env.NODE_ENV', process.env.NODE_ENV);
-    console.log('describe', describe);
     it('debería rechazar rutas incorrectas', async () => {
       try {
         const response = await request("http://localhost:3000").get('/api/phrases/invalid');
