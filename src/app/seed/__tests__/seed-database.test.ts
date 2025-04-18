@@ -47,8 +47,10 @@ describe('Funcionalidad de seed-database', () => {
   });
 
   test('prueba', async () => { 
-    const mock = jest.fn('hol');
-    console.log('mock', mock);
+    const mockFn = jest.fn();
+    mockFn('hola');
+    console.log('mockFn:', mockFn.mock.calls[0]);
+    expect(mockFn.mock.calls[0][0]).toBe('hola');
   });
 
   test('La función de población puede ser importada', async () => {

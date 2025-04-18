@@ -3,8 +3,18 @@ import { pool } from "../../../../db";
 
 const allowedOrigin = process.env.NEXT_PUBLIC_FRONTEND_URL || "*";
 
+interface Phrase {
+  id: number;
+  author: string;
+  phrase: string;
+  image_url: string | null;
+}
+
 /**
  * Función utilitaria para configurar la respuesta con CORS.
+ * @param {Phrase | Phrase[] | null} data - Los datos a incluir en la respuesta.
+ * @param {number} status - El código de estado de la respuesta.
+ * @returns {NextResponse} Una respuesta HTTP con los datos y el estado especificado.
  */
 function createResponse(data: unknown, status: number = 200) {
   return NextResponse.json(data, {
@@ -17,6 +27,11 @@ function createResponse(data: unknown, status: number = 200) {
   });
 }
 
+/**
+ * Maneja las solicitudes GET para obtener frases aleatorias o todas.
+ * @param {NextRequest} req - La solicitud HTTP.
+ * @returns {Promise<NextResponse> | {error: string}} Una respuesta HTTP con las frases obtenidas o un error.
+ */
 export async function GET(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
@@ -47,12 +62,12 @@ export function OPTIONS() {
   return createResponse({});
 }
 
-async function getRandomPhrase() {
+async function getRandomPhrase(): Promise<Phrase | null> {
   const result = await pool.query("SELECT * FROM phrases ORDER BY RANDOM() LIMIT 1");
   return result.rows[0] || null;
 }
 
-async function getAllPhrases() {
+async function getAllPhrases(): Promise<Phrase[]> {
   const result = await pool.query("SELECT * FROM phrases");
   return result.rows;
 }

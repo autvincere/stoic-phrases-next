@@ -27,7 +27,13 @@ const config: Config.InitialOptions = {
   // collectCoverage: true,
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected
-  // collectCoverageFrom: undefined,
+  collectCoverageFrom: [
+    'src/**/*.{ts,tsx}',
+    '!src/**/*.d.ts',
+    '!src/**/*.stories.{ts,tsx}',
+    '!src/**/*.test.{ts,tsx}',
+    '!src/**/__tests__/**',
+  ],
 
   // The directory where Jest should output its coverage files
   coverageDirectory: "coverage",
@@ -41,15 +47,17 @@ const config: Config.InitialOptions = {
   coverageProvider: "babel",
 
   // A list of reporter names that Jest uses when writing coverage reports
-  // coverageReporters: [
-  //   "json",
-  //   "text",
-  //   "lcov",
-  //   "clover"
-  // ],
+  coverageReporters: ['text', 'lcov', 'clover'],
 
   // An object that configures minimum threshold enforcement for coverage results
-  // coverageThreshold: undefined,
+  coverageThreshold: {
+    global: {
+      branches: 80,
+      functions: 80,
+      lines: 80,
+      statements: 80,
+    },
+  },
 
   // A path to a custom dependency extractor
   // dependencyExtractor: undefined,
@@ -137,7 +145,7 @@ const config: Config.InitialOptions = {
 
   // The paths to modules that run some code to configure or set up the testing environment before each test
   setupFiles: [
-    '<rootDir>/__tests__/setup.js'
+    // '<rootDir>/__tests__/setup.js'
   ],
 
   // A list of paths to modules that run some code to configure or set up the testing framework before each test
@@ -153,18 +161,27 @@ const config: Config.InitialOptions = {
   testEnvironment: 'node',
 
   // Options that will be passed to the testEnvironment
-  // testEnvironmentOptions: {},
+  testEnvironmentOptions: {
+    NODE_ENV: 'test',
+  },
 
   // Adds a location field to test results
   // testLocationInResults: false,
 
   // The glob patterns Jest uses to detect test files
-  testMatch: ['**/__tests__/**/*.test.[jt]s?(x)'],
+  testMatch: [
+    '**/__tests__/**/*.test.ts',
+    '**/__tests__/**/*.test.tsx',
+  ],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
   testPathIgnorePatterns: [
-    "<rootDir>/.next/",
-    "<rootDir>/node_modules/"
+    '/node_modules/',
+    '/.next/',
+     // Eliminamos esta parte que excluía los tests de integración en CI
+    // ...(process.env.CI === 'true' || process.env.VERCEL === '1' 
+    //   ? ['**/__tests__/integration/**'] 
+    //   : []),
   ],
 
   // The regexp pattern or array of patterns that Jest uses to detect test files

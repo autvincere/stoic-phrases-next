@@ -12,9 +12,11 @@
     "populate-prod": "NODE_ENV=production NODE_OPTIONS=\"--loader ts-node/esm\" ts-node src/app/seed/seed-database.ts",
     "test-ts-node": "NODE_OPTIONS=\"--loader ts-node/esm\" ts-node src/app/seed/test-ts-node.ts",
     "verify-seed": "NODE_OPTIONS=\"--loader ts-node/esm\" ts-node src/app/seed/verifyIntegrity.js",
-    "test": "jest --verbose",
-    "test-next": "NODE_ENV=test jest --verbose",
-    "test:watch": "npm run test -- --watch"
+    "test": "NODE_ENV=test jest --verbose --detectOpenHandles",
+    "test:unit": "jest --verbose --testPathPattern=unit",
+    "test:integration": "jest --verbose --testPathPattern=integration",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "cloudinary": "^2.5.1",
