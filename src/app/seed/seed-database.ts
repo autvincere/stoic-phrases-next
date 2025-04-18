@@ -2,20 +2,30 @@
  * * Mandatory
  */
 import dotenv from "dotenv";
-console.log("Entorno actual:", process.env.NODE_ENV);
-dotenv.config({
-  path:
-    process.env.NODE_ENV === "development"
-      ? "./.env.local"
-      : "./.env.production",
-});
 import path from "path";
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
-// import { connectDatabaseTest } from "../utils";
+// Get the directory name in ESM (required since __dirname isn't available in ESM)
+const currentDir = dirname(fileURLToPath(import.meta.url));
 
-import { pool } from "../../../db";
-import cloudinary from "../../../cloudinaryConfig";
-import phrases from "./phrases.json";
+// Carga las variables de entorno según el entorno
+const env = process.env.NODE_ENV || 'development';
+console.log("Entorno actual:", env);
+
+// Ruta absoluta al archivo .env
+const envPath = path.resolve(
+  process.cwd(), 
+  env === 'development' ? '.env.local' : '.env.production'
+);
+console.log("Cargando variables de entorno desde:", envPath);
+dotenv.config({ path: envPath });
+
+// Import from the project root using relative paths from the current file
+import { pool } from "../../../db.js";
+import cloudinary from "../../../cloudinaryConfig.ts";
+import phrases from "./phrases.json" assert { type: "json" };
+// import { connectDatabaseTest } from "../utils/database.js";
 
 interface Phrase {
   author: string;
@@ -23,16 +33,20 @@ interface Phrase {
   imagePath: string;
 }
 
-interface CloudinaryImageResource {
+interface ICloudinaryImageResource {
   public_id: string;
   secure_url: string;
   // Add other properties as needed
 }
 
-// Función para buscar una imagen en Cloudinary
-async function findImageInCloudinary(
+/**
+ * Función para buscar una imagen en Cloudinary
+ * @param {string}
+ * @returns {ICloudinaryImageResource | null}
+ */
+export async function findImageInCloudinary(
   fileName: string
-): Promise<CloudinaryImageResource | null> {
+): Promise<ICloudinaryImageResource | null> {
   try {
     const result = await cloudinary.search
       .expression(`public_id:phrases_images/${fileName}`) // Buscar por public_id (hash)
@@ -51,13 +65,17 @@ async function findImageInCloudinary(
     return null;
   }
 }
+// Funcion con 3 tipos de return
+// 1. string: URL de la imagen existente
+// 2. null: Error al subir la imagen
+// 3. ICloudinaryImageResource: URL de la imagen nueva
 
-async function uploadImageToCloudinary(
+export async function uploadImageToCloudinary(
   imagePath: string
 ): Promise<string | null> {
   try {
     // 1. Calcular el hash de la imagen
-    const imageRoute: string = String(__dirname + imagePath);
+    const imageRoute: string = String(currentDir + imagePath);
     console.log("imageRoute:", imageRoute);
     const filename = path.basename(imageRoute, path.extname(imageRoute));
     console.log("filename:", filename);
@@ -74,6 +92,7 @@ async function uploadImageToCloudinary(
       folder: "phrases_images",
       public_id: filename,
     });
+
     return result.secure_url;
   } catch (error) {
     console.error("Error al subir la imagen a Cloudinary:", error);
@@ -99,7 +118,7 @@ async function uploadImageToCloudinary(
 
 // uploadImageToProvider(phrases[4].imagePath);
 
-async function populateDatabase(): Promise<void> {
+export async function populateDatabase(): Promise<void> {
   try {
     console.log("Entorno actual:", process.env.NODE_ENV);
     console.log("DB_USER:",process.env.DB_USER);
@@ -166,5 +185,33 @@ async function populateDatabase(): Promise<void> {
   }
 }
 
-populateDatabase();
-// connectDatabaseTest(pool);
+/**
+ * Exporta las funciones y variables necesarias para las pruebas.
+ * Este objeto no se usa en la ejecución normal, solo para pruebas.
+ */
+export const seedUtils = {
+  findImageInCloudinary,
+  uploadImageToCloudinary,
+  populateDatabase,
+  // Para pruebas avanzadas
+  phrases
+};
+
+console.log('process.argv[1]:', process.argv[1]);
+console.log('import.meta.url:', import.meta.url);
+console.log('Condition result:', process.argv[1] && import.meta.url.includes(process.argv[1]));
+if (process.argv[1] && import.meta.url.includes(process.argv[1])) {
+  populateDatabase();
+}
+
+// Use a self-invoking async function to handle the promise rejection properly
+// (async () => {
+//   try {
+//     await connectDatabaseTest(pool);
+//     // Uncomment when ready to populate the database
+//     // await populateDatabase();
+//   } catch (error) {
+//     console.error("Error:", error);
+//     process.exit(1);
+//   }
+// })();
