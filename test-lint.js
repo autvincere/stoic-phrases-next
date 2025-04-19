@@ -6,4 +6,5 @@ const test = function () {
   }
 
   const unused = 'This variable is unused';
+  const perro;
 };
