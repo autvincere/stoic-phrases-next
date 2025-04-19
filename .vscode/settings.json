@@ -1,24 +1,55 @@
 {
-     "CodeGPT.apiKey": "CodeGPT Plus Beta",
-     "workbench.colorCustomizations": {
-          "activityBar.activeBackground": "#65c89b",
-          "activityBar.background": "#65c89b",
-          "activityBar.foreground": "#15202b",
-          "activityBar.inactiveForeground": "#15202b99",
-          "activityBarBadge.background": "#945bc4",
-          "activityBarBadge.foreground": "#e7e7e7",
-          "commandCenter.border": "#15202b99",
-          "sash.hoverBorder": "#65c89b",
-          "statusBar.background": "#42b883",
-          "statusBar.foreground": "#15202b",
-          "statusBarItem.hoverBackground": "#359268",
-          "statusBarItem.remoteBackground": "#42b883",
-          "statusBarItem.remoteForeground": "#15202b",
-          "titleBar.activeBackground": "#42b883",
-          "titleBar.activeForeground": "#15202b",
-          "titleBar.inactiveBackground": "#42b88399",
-          "titleBar.inactiveForeground": "#15202b99"
-     },
-     "peacock.color": "#42b883",
-     "editor.fontSize": 13 
+  "CodeGPT.apiKey": "CodeGPT Plus Beta",
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#65c89b",
+    "activityBar.background": "#65c89b",
+    "activityBar.foreground": "#15202b",
+    "activityBar.inactiveForeground": "#15202b99",
+    "activityBarBadge.background": "#945bc4",
+    "activityBarBadge.foreground": "#e7e7e7",
+    "commandCenter.border": "#15202b99",
+    "sash.hoverBorder": "#65c89b",
+    "statusBar.background": "#42b883",
+    "statusBar.foreground": "#15202b",
+    "statusBarItem.hoverBackground": "#359268",
+    "statusBarItem.remoteBackground": "#42b883",
+    "statusBarItem.remoteForeground": "#15202b",
+    "titleBar.activeBackground": "#42b883",
+    "titleBar.activeForeground": "#15202b",
+    "titleBar.inactiveBackground": "#42b88399",
+    "titleBar.inactiveForeground": "#15202b99"
+  },
+  "peacock.color": "#42b883",
+  "editor.fontSize": 13,
+  "editor.formatOnSave": false,
+  
+  "eslint.enable": true,
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+  "eslint.run": "onType",
+  "eslint.options": {
+    "overrideConfigFile": "eslint.config.mjs"
+  },
+  "eslint.experimental.useFlatConfig": true,
+  "eslint.lintTask.enable": true,
+  
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  }
 }

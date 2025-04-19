@@ -18,7 +18,15 @@ const HomePage = async () => {
 
   return (
     <main>
-      <Card phrase={phrase || { phrase: "Frase de prueba", author: "Desconocido", image_url: "" }} />
+      <Card
+        phrase={
+          phrase || {
+            phrase: "Frase de prueba",
+            author: "Desconocido",
+            image_url: "",
+          }
+        }
+      />
     </main>
   );
 };

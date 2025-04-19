@@ -90,4 +90,4 @@ describe("GET /api/phrases - Unit Tests", () => {
     expect(response.status).toBe(400);
     expect(data).toEqual({ error: "Database error" });
   });
-}); 
+});

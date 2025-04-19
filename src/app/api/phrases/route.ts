@@ -48,7 +48,6 @@ export async function GET(req: NextRequest) {
     console.log("Getting a random phrase");
     const phrase = await getRandomPhrase();
     return createResponse(phrase);
-
   } catch (error: unknown) {
     return createResponse(
       { error: error instanceof Error ? error.message : "Unknown error" },
@@ -63,7 +62,9 @@ export function OPTIONS() {
 }
 
 async function getRandomPhrase(): Promise<Phrase | null> {
-  const result = await pool.query("SELECT * FROM phrases ORDER BY RANDOM() LIMIT 1");
+  const result = await pool.query(
+    "SELECT * FROM phrases ORDER BY RANDOM() LIMIT 1"
+  );
   return result.rows[0] || null;
 }
 
