@@ -26,5 +26,8 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+    - name: Muestra contenido del directorio
+      run: ls -la
     - run: npm ci
+    - run: npm run lint
     - run: npm run build
