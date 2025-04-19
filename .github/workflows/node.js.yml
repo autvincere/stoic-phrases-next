@@ -29,5 +29,7 @@ jobs:
     - name: Muestra contenido del directorio
       run: ls -la
     - run: npm ci
+    - name: Check formatting
+      run: npm run format:check
     - run: npm run lint
     - run: npm run build
