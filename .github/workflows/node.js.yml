@@ -47,7 +47,7 @@ jobs:
     - run: npm run lint
     - run: npm run build
     - name: Configurar base de datos para pruebas
-      run: NODE_OPTIONS="--loader ts-node/esm" ts-node src/app/seed/setup-test-db.ts
+      run: npx ts-node --esm src/app/seed/setup-test-db.ts
       env:
         DB_USER: test_user
         DB_HOST: localhost

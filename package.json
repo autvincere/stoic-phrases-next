@@ -15,7 +15,7 @@
     "populate-prod": "NODE_ENV=production NODE_OPTIONS=\"--loader ts-node/esm\" ts-node src/app/seed/seed-database.ts",
     "test-ts-node": "NODE_OPTIONS=\"--loader ts-node/esm\" ts-node src/app/seed/test-ts-node.ts",
     "verify-seed": "NODE_OPTIONS=\"--loader ts-node/esm\" ts-node src/app/seed/verifyIntegrity.js",
-    "setup-test-db": "NODE_ENV=test NODE_OPTIONS=\"--loader ts-node/esm\" ts-node src/app/seed/setup-test-db.ts",
+    "setup-test-db": "NODE_ENV=test ts-node --esm src/app/seed/setup-test-db.ts",
     "test": "NODE_ENV=test jest --verbose --detectOpenHandles",
     "test:unit": "jest --verbose --testPathPattern=unit",
     "test:integration": "jest --verbose --testPathPattern=integration",
