@@ -3,20 +3,20 @@
  */
 import dotenv from "dotenv";
 import path from "path";
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 
 // Get the directory name in ESM (required since __dirname isn't available in ESM)
 const currentDir = dirname(fileURLToPath(import.meta.url));
 
 // Carga las variables de entorno según el entorno
-const env = process.env.NODE_ENV || 'development';
+const env = process.env.NODE_ENV || "development";
 console.log("Entorno actual:", env);
 
 // Ruta absoluta al archivo .env
 const envPath = path.resolve(
-  process.cwd(), 
-  env === 'development' ? '.env.local' : '.env.production'
+  process.cwd(),
+  env === "development" ? ".env.local" : ".env.production"
 );
 console.log("Cargando variables de entorno desde:", envPath);
 dotenv.config({ path: envPath });
@@ -121,7 +121,7 @@ export async function uploadImageToCloudinary(
 export async function populateDatabase(): Promise<void> {
   try {
     console.log("Entorno actual:", process.env.NODE_ENV);
-    console.log("DB_USER:",process.env.DB_USER);
+    console.log("DB_USER:", process.env.DB_USER);
     console.log({
       DB_USER: process.env.DB_USER,
       DB_HOST: process.env.DB_HOST,
@@ -194,12 +194,15 @@ export const seedUtils = {
   uploadImageToCloudinary,
   populateDatabase,
   // Para pruebas avanzadas
-  phrases
+  phrases,
 };
 
-console.log('process.argv[1]:', process.argv[1]);
-console.log('import.meta.url:', import.meta.url);
-console.log('Condition result:', process.argv[1] && import.meta.url.includes(process.argv[1]));
+console.log("process.argv[1]:", process.argv[1]);
+console.log("import.meta.url:", import.meta.url);
+console.log(
+  "Condition result:",
+  process.argv[1] && import.meta.url.includes(process.argv[1])
+);
 if (process.argv[1] && import.meta.url.includes(process.argv[1])) {
   populateDatabase();
 }

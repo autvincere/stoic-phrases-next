@@ -35,7 +35,8 @@ console.log('phrases: ', phrases)
     setLoading(true);
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/phrases`, { cache: 'no-store' });
-      const data = await response.json();
+                  const data = await response.json();
+      console.log('data', data)
       setPhrases(data);
     } catch (error) {
       console.error("Error fetching new phrase:", error);
