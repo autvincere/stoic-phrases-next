@@ -1,0 +1,20 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Estructura del Proyecto
+
+Este es un proyecto Next.js que proporciona una API para frases estoicas con una base de datos PostgreSQL.
+
+## Archivos Principales
+- [db.ts](mdc:db.ts) - Configuración de conexión a la base de datos PostgreSQL
+- [package.json](mdc:package.json) - Dependencias y scripts del proyecto
+- [docker-compose.yml](mdc:docker-compose.yml) - Configuración Docker para desarrollo local
+
+## Estructura de la Aplicación
+- [src/app/page.tsx](mdc:src/app/page.tsx) - Página principal de la aplicación
+- [src/app/layout.tsx](mdc:src/app/layout.tsx) - Componente de diseño raíz
+
+## Rutas API
+- [src/app/api/phrases/route.ts](mdc:src/app/api/phrases/route.ts) - Endpoints API para frases estoicas
