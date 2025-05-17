@@ -3,8 +3,8 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 ## Getting Started
 
 1. Clonar el repositorio
-2. Renombrar el archivo `.env.template` a `.env` y cambiar las variables de entorno.
-2. Levantar la base de datos
+2. duplicar el archivo `.env.template` a `.env.local` y `env.production`  para agregar cambiar las variables de entorno segun correspondan.
+3. Levantar la base de datos (que contendra frases)
 ```bash
 docker compose up -d
 ```
@@ -16,6 +16,30 @@ docker build -t next-postgre .
 ```bash
 docker container run -dp 3000:3000 next-postgre
 ```
+5. Se comienza migracion con prisma
+```bash
+npm run prisma:dev
+```
+6. Generamos prisma
+```bash
+npm run prisma:generate:dev
+```
+7.  migramos schemas con prisma a base de datos
+```bash
+npm run prisma:migrate:dev
+```
+8. Probamos que la base de datos exista
+```bash
+db:init:dev
+```
+8. Se pobla tabla con datos de frases
+```bash
+
+```
+9. Ejecutamos el comando para levantar front
+```bash
+npm run dev
+```
 5. visitar la url: [http://localhost:3000](http://localhost:3000)
 6.  bajar el contenedor:
 ```bash
@@ -25,9 +49,12 @@ if this not working use container_id.
 7.
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Prisma commands
+```
+npx prisma init
+npx prisma migrate dev
+npx prisma generate
+```
 
 ## Learn More
 
