@@ -6,7 +6,7 @@ import { prisma } from '../lib/db';
 async function main() {
   try {
     // Verificar la conexión a la base de datos
-    const result = await prisma.$queryRaw`SELECT NOW() as time`;
+    const result = await prisma.$queryRaw<[{ time: Date }]>`SELECT NOW() as time`;
     console.log('✅ Conexión exitosa a la base de datos');
     console.log('Hora del servidor:', result[0].time);
 
