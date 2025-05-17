@@ -1,4 +1,4 @@
-import { PrismaClient } from '../../src/generated/prisma';
+import { PrismaClient } from '@prisma/client';
 
 // Analizar la conexión de base de datos (ya cargada por dotenv-cli)
 const dbUrl = process.env.DATABASE_URL || 'postgresql://postgres:123456@localhost:5432/phrases_db';
