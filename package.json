@@ -11,10 +11,10 @@
     "lint:fix": "next lint --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "populate-dev": "NODE_ENV=development NODE_OPTIONS=\"--loader ts-node/esm\" ts-node src/app/seed/seed-database.ts",
-    "populate-prod": "NODE_ENV=production NODE_OPTIONS=\"--loader ts-node/esm\" ts-node src/app/seed/seed-database.ts",
-    "test-ts-node": "NODE_OPTIONS=\"--loader ts-node/esm\" ts-node src/app/seed/test-ts-node.ts",
-    "verify-seed": "NODE_OPTIONS=\"--loader ts-node/esm\" ts-node src/app/seed/verifyIntegrity.js",
+    "populate-dev": "NODE_ENV=development dotenv -e .env.local -- tsx src/app/seed/seed-database.ts",
+    "populate-prod": "NODE_ENV=production dotenv -e .env.production -- tsx src/app/seed/seed-database.ts",
+    "test-ts-node": "tsx src/app/seed/test-ts-node.ts",
+    "verify-seed": "tsx src/app/seed/verifyIntegrity.js",
     "setup-test-db": "NODE_ENV=test node src/app/seed/setup-test-db.js",
     "test": "NODE_ENV=test jest --verbose --detectOpenHandles",
     "test:unit": "jest --verbose --testPathPattern=unit",
@@ -33,7 +33,7 @@
     "prisma:studio:dev": "npm run prisma:dev -- studio",
     "prisma:studio:prod": "npm run prisma:prod -- studio",
     "db:init:dev": "NODE_ENV=development dotenv -e .env.local -- tsx src/scripts/init-db.ts",
-    "db:init:prod": "NODE_ENV=production NODE_OPTIONS=\"--loader ts-node/esm\" ts-node src/scripts/init-db.ts"
+    "db:init:prod": "NODE_ENV=production dotenv -e .env.production -- tsx src/scripts/init-db.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.6.0",
@@ -72,6 +72,7 @@
     "prettier": "^3.5.3",
     "supertest": "^7.1.0",
     "ts-jest": "^29.2.6",
+    "ts-jest-mock": "^1.4.2",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.4",
     "typescript": "^5"

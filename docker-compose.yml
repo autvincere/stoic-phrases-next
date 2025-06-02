@@ -13,3 +13,18 @@ services:
       - POSTGRES_DB=${DB_NAME}
     volumes:
       - ./postgres:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: next-postgre-app
+    restart: always
+    ports:
+      - 3000:3000
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@phrasesDB:5432/${DB_NAME}
+    depends_on:
+      - phrasesDB
+    volumes:
+      - .:/app
+      - /app/node_modules

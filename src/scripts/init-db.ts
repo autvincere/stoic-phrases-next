@@ -10,13 +10,13 @@ async function main() {
     console.log('✅ Conexión exitosa a la base de datos');
     console.log('Hora del servidor:', result[0].time);
 
-    // Contar los registros en la tabla Phrase
-    const count = await prisma.phrase.count();
-    console.log(`La tabla Phrase tiene ${count} registros`);
+    // Contar los registros en la tabla Phrases
+    const count = await prisma.phrases.count();
+    console.log(`La tabla Phrases tiene ${count} registros`);
 
     // Ejemplo de consulta
     if (count > 0) {
-      const sample = await prisma.phrase.findFirst();
+      const sample = await prisma.phrases.findFirst();
       console.log('Muestra de un registro:');
       console.log(sample);
     }
