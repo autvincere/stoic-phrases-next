@@ -4,11 +4,11 @@
  */
 
 import type { Config } from '@jest/types';
-import nextJest from 'next/jest.js'
+import nextJest from 'next/jest.js';
 
 const createJestConfig = nextJest({
   dir: './',
-})
+});
 
 const config: Config.InitialOptions = {
   // All imported modules in your tests should be mocked automatically
@@ -33,10 +33,11 @@ const config: Config.InitialOptions = {
     '!src/**/*.stories.{ts,tsx}',
     '!src/**/*.test.{ts,tsx}',
     '!src/**/__tests__/**',
+    '!src/generated/**',
   ],
 
   // The directory where Jest should output its coverage files
-  coverageDirectory: "coverage",
+  coverageDirectory: 'coverage',
 
   // An array of regexp pattern strings used to skip coverage collection
   // coveragePathIgnorePatterns: [
@@ -44,7 +45,7 @@ const config: Config.InitialOptions = {
   // ],
 
   // Indicates which provider should be used to instrument code for coverage
-  coverageProvider: "babel",
+  coverageProvider: 'babel',
 
   // A list of reporter names that Jest uses when writing coverage reports
   coverageReporters: ['text', 'lcov', 'clover'],
@@ -103,7 +104,13 @@ const config: Config.InitialOptions = {
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
-  // modulePathIgnorePatterns: [],
+  modulePathIgnorePatterns: [
+    '<rootDir>/.next/',
+    '<rootDir>/out/',
+    '<rootDir>/build/',
+    '<rootDir>/dist/',
+    '<rootDir>/src/generated/',
+  ],
 
   // Activates notifications for test results
   // notify: false,
@@ -149,7 +156,7 @@ const config: Config.InitialOptions = {
   ],
 
   // A list of paths to modules that run some code to configure or set up the testing framework before each test
-  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
 
   // The number of seconds after which a test is considered as slow and reported as such in the results.
   // slowTestThreshold: 5,
@@ -169,19 +176,17 @@ const config: Config.InitialOptions = {
   // testLocationInResults: false,
 
   // The glob patterns Jest uses to detect test files
-  testMatch: [
-    '**/__tests__/**/*.test.ts',
-    '**/__tests__/**/*.test.tsx',
-  ],
+  testMatch: ['**/__tests__/**/*.test.ts', '**/__tests__/**/*.test.tsx'],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
   testPathIgnorePatterns: [
     '/node_modules/',
     '/.next/',
-     // Eliminamos esta parte que excluía los tests de integración en CI
-    // ...(process.env.CI === 'true' || process.env.VERCEL === '1' 
-    //   ? ['**/__tests__/integration/**'] 
-    //   : []),
+    '/out/',
+    '/build/',
+    '/dist/',
+    '/coverage/',
+    '/src/generated/',
   ],
 
   // The regexp pattern or array of patterns that Jest uses to detect test files
@@ -220,4 +225,4 @@ const config: Config.InitialOptions = {
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
-export default createJestConfig(config)
+export default createJestConfig(config);
