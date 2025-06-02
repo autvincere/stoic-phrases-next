@@ -1,0 +1,39 @@
+
+> stoic-phrases-next@0.1.0 dev
+> NODE_ENV=development dotenv -e .env.local -- next dev
+
+   ▲ Next.js 15.1.3
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.100.6:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 3.3s
+ ○ Compiling /api/health ...
+ ✓ Compiled /api/health in 3.1s (330 modules)
+ GET /api/health 200 in 3359ms
+ ○ Compiling /api/test-db ...
+ ✓ Compiled /api/test-db in 1984ms (348 modules)
+[Prisma] Inicializando en entorno: development
+[Prisma] DATABASE_URL: postgresql://postgres:****@localhost:5432/phrases_db
+[Prisma] Usando configuración de DESARROLLO
+[Prisma] Creando nueva instancia de desarrollo
+ GET /api/test-db 200 in 2127ms
+ GET /api/health 200 in 10ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 3s (632 modules)
+ GET /api/phrases/invalid 404 in 3341ms
+ ✓ Compiled /api/phrases in 280ms (602 modules)
+[Prisma] Inicializando en entorno: development
+[Prisma] DATABASE_URL: postgresql://postgres:****@localhost:5432/phrases_db
+[Prisma] Usando configuración de DESARROLLO
+[Prisma] Reutilizando instancia de desarrollo existente
+Query params: 
+Getting a random phrase
+ GET /api/phrases 200 in 410ms
+Query params: all=true
+Getting all phrases
+ GET /api/phrases?all=true 200 in 92ms
+ OPTIONS /api/phrases 200 in 8ms
+ POST /api/phrases 405 in 8ms
+[?25h

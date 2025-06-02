@@ -10,8 +10,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
 
     services:
@@ -32,44 +31,107 @@ jobs:
     strategy:
       matrix:
         node-version: [20.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
     - uses: actions/checkout@v4
+    
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - name: Muestra contenido del directorio
-      run: ls -la
-    - run: npm ci
-    - run: npm run lint
-    - run: npm run build
-    - name: Configurar base de datos para pruebas
-      run: node src/app/seed/setup-test-db.js
+        
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Setup test environment file
+      run: |
+        echo 'DATABASE_URL="postgresql://test_user:test_password@localhost:5432/test_db"' > .env.test
+        echo 'NODE_ENV=test' >> .env.test
+        echo 'CLOUDINARY_CLOUD_NAME=test' >> .env.test
+        echo 'CLOUDINARY_API_KEY=test' >> .env.test
+        echo 'CLOUDINARY_API_SECRET=test' >> .env.test
+        
+    - name: Run linting
+      run: npm run lint
+    
+    - name: Generate Prisma client for test
+      run: NODE_ENV=test npx dotenv -e .env.test -- npx prisma generate
       env:
-        DB_USER: test_user
-        DB_HOST: localhost
-        DB_NAME: test_db
-        DB_PASSWORD: test_password
-        DB_PORT: 5432
-        NODE_ENV: test
-    - name: Start Next.js for integration tests
-      run: npm run dev & sleep 15
+        DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
+        
+    - name: Build application
+      run: NODE_ENV=test npx dotenv -e .env.test -- npm run build
       env:
-        DB_USER: test_user
-        DB_HOST: localhost
-        DB_NAME: test_db
-        DB_PASSWORD: test_password
-        DB_PORT: 5432
-        NODE_ENV: test
-    - name: Run all tests
-      run: npm test
+        DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
+    
+    - name: Setup database schema with Prisma
+      run: NODE_ENV=test npx dotenv -e .env.test -- npx prisma migrate deploy
       env:
-        DB_USER: test_user
-        DB_HOST: localhost
-        DB_NAME: test_db
-        DB_PASSWORD: test_password
-        DB_PORT: 5432
-        NODE_ENV: test
+        DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
+        
+    - name: Seed test database
+      run: NODE_ENV=test npx dotenv -e .env.test -- npx tsx src/scripts/seed-test-db.ts
+      env:
+        DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
+
+    # Separar tests unitarios de integración
+    - name: Run unit tests
+      run: NODE_ENV=test npx dotenv -e .env.test -- npm run test:unit
+      env:
+        DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
+
+    # Tests de integración requieren servidor corriendo
+    - name: Start Next.js server in background
+      run: |
+        NODE_ENV=test npx dotenv -e .env.test -- npm run dev > server.log 2>&1 &
+        echo $! > server.pid
+      env:
+        DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
+        
+    - name: Wait for server to be ready
+      run: |
+        echo "Waiting for Next.js server to start..."
+        for i in {1..30}; do
+          if curl -f http://localhost:3000/api/health >/dev/null 2>&1; then
+            echo "✅ Server is ready after $i attempts"
+            break
+          fi
+          echo "⏳ Attempt $i/30: Server not ready yet, waiting 2 seconds..."
+          sleep 2
+          if [ $i -eq 30 ]; then
+            echo "❌ Server failed to start after 60 seconds"
+            echo "=== Server logs ==="
+            cat server.log
+            exit 1
+          fi
+        done
+        
+    - name: Verify database connection
+      run: |
+        echo "Testing database connectivity..."
+        curl -f http://localhost:3000/api/test-db || {
+          echo "❌ Database connection test failed"
+          echo "=== Server logs ==="
+          cat server.log
+          exit 1
+        }
+        
+    - name: Run integration tests
+      run: NODE_ENV=test npx dotenv -e .env.test -- npm run test:integration
+      env:
+        DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
+        
+    - name: Stop Next.js server
+      if: always()
+      run: |
+        if [ -f server.pid ]; then
+          kill $(cat server.pid) || true
+          rm server.pid
+        fi
+        
+    - name: Show server logs on failure
+      if: failure()
+      run: |
+        echo "=== Next.js Server Logs ==="
+        cat server.log || echo "No server log file found"

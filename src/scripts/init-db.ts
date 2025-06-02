@@ -1,4 +1,4 @@
-import { prisma } from '../lib/db';
+import prisma from '../lib/prisma';
 
 /**
  * Script para inicializar la base de datos y verificar la conexión

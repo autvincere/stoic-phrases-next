@@ -127,21 +127,61 @@ docker start mi-app-next
 
 ## 🧪 Testing
 
+### Tests unitarios
 ```bash
-# Ejecutar todos los tests
-npm test
-
-# Tests unitarios
+# Ejecutar tests unitarios (no requieren servidor)
 npm run test:unit
-
-# Tests de integración
-npm run test:integration
 
 # Tests en modo watch
 npm run test:watch
 
 # Coverage de tests
 npm run test:coverage
+```
+
+### Tests de integración
+
+Los tests de integración requieren que tanto PostgreSQL como Next.js estén corriendo:
+
+#### Opción 1: Script automático (Recomendado)
+```bash
+# Asegúrate de que PostgreSQL esté corriendo
+docker-compose up -d
+
+# Ejecutar script que maneja todo automáticamente
+./test-integration-local.sh
+```
+
+#### Opción 2: Manual paso a paso
+```bash
+# 1. Levantar PostgreSQL
+docker-compose up -d
+
+# 2. Configurar entorno de test
+echo 'DATABASE_URL="postgresql://postgres:123456@localhost:5432/phrases_db"' > .env.test
+echo 'NODE_ENV=test' >> .env.test
+
+# 3. Preparar base de datos
+NODE_ENV=test dotenv -e .env.test -- npx prisma generate
+NODE_ENV=test dotenv -e .env.test -- npx prisma migrate deploy
+NODE_ENV=test dotenv -e .env.test -- tsx src/scripts/seed-test-db.ts
+
+# 4. Iniciar Next.js en background
+NODE_ENV=test dotenv -e .env.test -- npm run dev &
+
+# 5. Esperar a que esté listo y ejecutar tests
+sleep 10
+NODE_ENV=test dotenv -e .env.test -- npm run test:integration
+
+# 6. Limpiar
+kill %1  # Matar proceso de Next.js
+rm .env.test
+```
+
+### Todos los tests
+```bash
+# Ejecutar todos los tests (unitarios + integración)
+npm test
 ```
 
 ## 🛠️ Scripts disponibles

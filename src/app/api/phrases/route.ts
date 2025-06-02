@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '../../../../src/lib/db';
+import prisma from '../../../lib/prisma';
 
 const allowedOrigin = process.env.NEXT_PUBLIC_FRONTEND_URL || '*';
 
@@ -49,7 +49,8 @@ export async function GET(req: NextRequest) {
     const phrase = await getRandomPhrase();
     return createResponse(phrase);
   } catch (error: unknown) {
-    return createResponse({ error: error instanceof Error ? error.message : 'Unknown error' }, 400);
+    console.error('API Error:', error);
+    return createResponse({ error: error instanceof Error ? error.message : 'Unknown error' }, 500);
   }
 }
 
@@ -59,21 +60,32 @@ export function OPTIONS() {
 }
 
 async function getRandomPhrase() {
-  // Usando Prisma en lugar de SQL directo
-  const phrasesCount = await prisma.phrases.count();
+  try {
+    // Usando Prisma en lugar de SQL directo
+    const phrasesCount = await prisma.phrases.count();
 
-  if (phrasesCount === 0) return null;
+    if (phrasesCount === 0) return null;
 
-  const skip = Math.floor(Math.random() * phrasesCount);
-  const [phrase] = await prisma.phrases.findMany({
-    take: 1,
-    skip: skip,
-  });
+    const skip = Math.floor(Math.random() * phrasesCount);
+    const phrase = await prisma.phrases.findFirst({
+      skip: skip,
+    });
 
-  return phrase;
+    return phrase;
+  } catch (error) {
+    console.error('Error getting random phrase:', error);
+    throw error;
+  }
 }
 
 async function getAllPhrases() {
-  // Usando Prisma
-  return prisma.phrases.findMany();
+  try {
+    // Usando Prisma
+    return await prisma.phrases.findMany({
+      orderBy: { created_at: 'desc' },
+    });
+  } catch (error) {
+    console.error('Error getting all phrases:', error);
+    throw error;
+  }
 }

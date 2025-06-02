@@ -1,10 +1,20 @@
 import { NextResponse } from 'next/server';
-import { pool } from '../../../../db'; // Asegúrate de que `db.ts` está bien configurado
+import prisma from '../../../lib/prisma';
 
 export async function GET() {
   try {
-    const result = await pool.query('SELECT NOW()'); // Verifica la conexión ejecutando una consulta
-    return NextResponse.json({ success: true, time: result.rows[0].now });
+    // Verificar la conexión ejecutando una consulta simple
+    const result = await prisma.$queryRaw<[{ now: Date }]>`SELECT NOW() as now`;
+
+    // También verificar que la tabla Phrases existe y contar registros
+    const phrasesCount = await prisma.phrases.count();
+
+    return NextResponse.json({
+      success: true,
+      time: result[0].now,
+      phrasesCount: phrasesCount,
+      database: 'Connected via Prisma',
+    });
   } catch (error) {
     console.error('Error en la API de prueba:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
