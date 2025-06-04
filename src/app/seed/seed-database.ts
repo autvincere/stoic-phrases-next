@@ -1,31 +1,38 @@
 /*
  * * Mandatory
  */
-import dotenv from "dotenv";
-import path from "path";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import crypto from 'crypto';
+import prisma from '../../lib/prisma';
+
+// Determinar el entorno y cargar variables antes de cualquier importación de Prisma
+const env = process.env.NODE_ENV || 'development';
+console.log('Entorno actual:', env);
+
+// Determinar qué archivo .env cargar según el entorno
+let envFile = '.env.local';
+if (env === 'production') {
+  envFile = '.env.production';
+} else if (env === 'test') {
+  envFile = '.env.test';
+}
+
+// Ruta absoluta al archivo .env
+const envPath = path.resolve(process.cwd(), envFile);
+console.log('Cargando variables de entorno desde:', envPath);
+dotenv.config({ path: envPath });
+
+console.log('DATABASE_URL:', process.env.DATABASE_URL ? 'Definida' : 'No definida');
 
 // Get the directory name in ESM (required since __dirname isn't available in ESM)
 const currentDir = dirname(fileURLToPath(import.meta.url));
 
-// Carga las variables de entorno según el entorno
-const env = process.env.NODE_ENV || "development";
-console.log("Entorno actual:", env);
-
-// Ruta absoluta al archivo .env
-const envPath = path.resolve(
-  process.cwd(),
-  env === "development" ? ".env.local" : ".env.production"
-);
-console.log("Cargando variables de entorno desde:", envPath);
-dotenv.config({ path: envPath });
-
-// Import from the project root using relative paths from the current file
-import { pool } from "../../../db.js";
-import cloudinary from "../../../cloudinaryConfig.ts";
-import phrases from "./phrases.json" assert { type: "json" };
-// import { connectDatabaseTest } from "../utils/database.js";
+// Import cloudinary config
+import cloudinary from '../../../cloudinaryConfig.ts';
+import phrasesData from './phrases.json' assert { type: 'json' };
 
 interface Phrase {
   author: string;
@@ -45,7 +52,7 @@ interface ICloudinaryImageResource {
  * @returns {ICloudinaryImageResource | null}
  */
 export async function findImageInCloudinary(
-  fileName: string
+  fileName: string,
 ): Promise<ICloudinaryImageResource | null> {
   try {
     const result = await cloudinary.search
@@ -53,49 +60,48 @@ export async function findImageInCloudinary(
       .execute();
 
     if (result.resources.length > 0) {
-      console.log("Imagen encontrada en Cloudinary:", result.resources[0]);
+      console.log('Imagen encontrada en Cloudinary:', result.resources[0]);
       return result.resources[0]; // Retorna la primera imagen encontrada
     } else {
-      console.log("No se encontró la imagen en Cloudinary.");
+      console.log('No se encontró la imagen en Cloudinary.');
     }
 
     return null;
   } catch (error) {
-    console.error("Error buscando la imagen en Cloudinary:", error);
+    console.error('Error buscando la imagen en Cloudinary:', error);
     return null;
   }
 }
-// Funcion con 3 tipos de return
-// 1. string: URL de la imagen existente
-// 2. null: Error al subir la imagen
-// 3. ICloudinaryImageResource: URL de la imagen nueva
 
-export async function uploadImageToCloudinary(
-  imagePath: string
-): Promise<string | null> {
+/**
+ * Función para subir una imagen a Cloudinary
+ * @param {string} imagePath - La ruta de la imagen a subir
+ * @returns {Promise<string | null>} - La URL de la imagen desplegada o null si hay error
+ */
+export async function uploadImageToCloudinary(imagePath: string): Promise<string | null> {
   try {
     // 1. Calcular el hash de la imagen
     const imageRoute: string = String(currentDir + imagePath);
-    console.log("imageRoute:", imageRoute);
+    console.log('imageRoute:', imageRoute);
     const filename = path.basename(imageRoute, path.extname(imageRoute));
-    console.log("filename:", filename);
+    console.log('filename:', filename);
 
     // 2. Buscar si ya existe una imagen con este hash en Cloudinary
     const existingImage = await findImageInCloudinary(filename);
 
     if (existingImage) {
-      console.log("Imagen ya existe en Cloudinary:", existingImage.secure_url);
+      console.log('Imagen ya existe en Cloudinary:', existingImage.secure_url);
       return existingImage.secure_url; // Retorna la URL de la imagen existente
     }
 
+    // 3. Subir la imagen a Cloudinary
     const result = await cloudinary.uploader.upload(imageRoute, {
-      folder: "phrases_images",
+      folder: 'phrases_images',
       public_id: filename,
     });
-
     return result.secure_url;
   } catch (error) {
-    console.error("Error al subir la imagen a Cloudinary:", error);
+    console.error('Error al subir la imagen a Cloudinary:', error);
     return null;
   }
 }
@@ -118,72 +124,61 @@ export async function uploadImageToCloudinary(
 
 // uploadImageToProvider(phrases[4].imagePath);
 
-export async function populateDatabase(): Promise<void> {
+/**
+ * Función para poblar la base de datos con frases e imágenes
+ * Limpia la tabla existente y la repuebla con datos desde phrasesData
+ * Sube las imágenes a Cloudinary y almacena las URLs en la base de datos
+ * @returns {Promise<void>} - No retorna valor, pero puede lanzar errores
+ * @throws {Error} - Si hay problemas con la base de datos o subida de imágenes
+ */
+export const populateDatabase = async (): Promise<void> => {
   try {
-    console.log("Entorno actual:", process.env.NODE_ENV);
-    console.log("DB_USER:", process.env.DB_USER);
-    console.log({
-      DB_USER: process.env.DB_USER,
-      DB_HOST: process.env.DB_HOST,
-      DB_NAME: process.env.DB_NAME,
-      DB_PASSWORD: process.env.DB_PASSWORD,
-      DB_PORT: process.env.DB_PORT,
-    });
-    console.log(
-      "Inicializando el proceso de creación de tabla y población de datos..."
-    );
-    // Crear o recrear la tabla 'phrases'
-    await pool.query(`
-             DO $$
-             BEGIN
-                 IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'phrases') THEN
-                     DROP TABLE phrases;
-                 END IF;
-                 CREATE TABLE phrases (
-                     id SERIAL PRIMARY KEY,
-                     author VARCHAR(255) NOT NULL,
-                     phrase VARCHAR(255) NOT NULL,
-                     image_url VARCHAR(255)
-                 );
-             END $$;
-         `);
-    console.log('Tabla "phrases" creada o recreada.');
+    console.log('Entorno actual:', process.env.NODE_ENV);
+    console.log('DATABASE_URL:', process.env.DATABASE_URL);
+    console.log('Inicializando el proceso de creación de tabla y población de datos...');
 
-    // Poblar la tabla 'phrases' con los datos
-    for (const { author, phrase, imagePath } of phrases as Phrase[]) {
-      const imageUrl = await uploadImageToCloudinary(imagePath);
+    // Limpiar la tabla existente - usando Prisma
+    await prisma.phrases.deleteMany({});
+    console.log('Tabla "Phrases" limpiada.');
+
+    // Poblar la tabla 'Phrases' con los datos usando Prisma
+    for (const { author, phrase, imagePath } of phrasesData as Phrase[]) {
+      const imageUrl: string | null = await uploadImageToCloudinary(imagePath);
       if (!imageUrl) {
-        console.warn(
-          `Saltando la frase debido a un error al subir la imagen: ${imagePath}`
-        );
+        console.warn(`Saltando la frase debido a un error al subir la imagen: ${imagePath}`);
         continue; // Continúa con la siguiente frase si no hay URL
       }
 
-      await pool.query(
-        `INSERT INTO phrases (author, phrase, image_url) VALUES ($1, $2, $3)`,
-        [author, phrase, imageUrl]
-      );
+      await prisma.phrases.create({
+        data: {
+          id: crypto.randomUUID(),
+          author,
+          phrase,
+          image_url: imageUrl,
+          updated_at: new Date(),
+        },
+      });
     }
-    console.log('Datos insertados exitosamente en la tabla "phrases".');
+    console.log('Datos insertados exitosamente en la tabla "Phrases".');
 
     // Recuperar los datos insertados para confirmar
-    const result = await pool.query("SELECT * FROM phrases");
-    console.log('Datos actuales en la tabla "phrases":');
-    console.table(result.rows);
+    const phrasesFromDb = await prisma.phrases.findMany();
+    console.log('Datos actuales en la tabla "Phrases":');
+    console.table(phrasesFromDb);
 
-    console.log("Script ejecutado exitosamente.");
+    console.log('Script ejecutado exitosamente.');
   } catch (error) {
     console.error(
-      "Error durante la ejecución del script:",
-      error instanceof Error ? error.message : error
+      'Error durante la ejecución del script:',
+      error instanceof Error ? error.message : error,
     );
     process.exit(1);
   } finally {
-    // Cierra el pool antes de salir
-    await pool.end();
+    // Desconectar Prisma antes de salir
+    await prisma.$disconnect();
     process.exit(0);
   }
-}
+};
 
 /**
  * Exporta las funciones y variables necesarias para las pruebas.
@@ -194,27 +189,12 @@ export const seedUtils = {
   uploadImageToCloudinary,
   populateDatabase,
   // Para pruebas avanzadas
-  phrases,
+  phrases: phrasesData,
 };
 
-console.log("process.argv[1]:", process.argv[1]);
-console.log("import.meta.url:", import.meta.url);
-console.log(
-  "Condition result:",
-  process.argv[1] && import.meta.url.includes(process.argv[1])
-);
+console.log('process.argv[1]:', process.argv[1]);
+console.log('import.meta.url:', import.meta.url);
+console.log('Condition result:', process.argv[1] && import.meta.url.includes(process.argv[1]));
 if (process.argv[1] && import.meta.url.includes(process.argv[1])) {
   populateDatabase();
 }
-
-// Use a self-invoking async function to handle the promise rejection properly
-// (async () => {
-//   try {
-//     await connectDatabaseTest(pool);
-//     // Uncomment when ready to populate the database
-//     // await populateDatabase();
-//   } catch (error) {
-//     console.error("Error:", error);
-//     process.exit(1);
-//   }
-// })();
