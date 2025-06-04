@@ -1,0 +1,63 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Migración a Prisma ORM
+
+Esta guía explica cómo migrar el proyecto de consultas directas a PostgreSQL a Prisma ORM.
+
+## Beneficios de Prisma
+- Seguridad de tipos con cliente auto-generado
+- Esquema declarativo
+- Migraciones automatizadas
+- API de consulta intuitiva
+- Agnóstico a la base de datos
+
+## Pasos para la Migración
+1. Instalar Prisma: `npm install prisma --save-dev` y `npm install @prisma/client`
+2. Inicializar Prisma: `npx prisma init`
+3. Definir el esquema en `prisma/schema.prisma` basado en la estructura actual de la base de datos
+4. Generar el cliente Prisma: `npx prisma generate`
+5. Reemplazar consultas directas a PostgreSQL en [src/app/api/phrases/route.ts](mdc:src/app/api/phrases/route.ts) con el cliente Prisma
+6. Actualizar pruebas para simular el cliente Prisma en lugar del Pool de pg
+
+## Ejemplo de Esquema (Basado en la Estructura Actual)
+```prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Phrase {
+  id        Int     @id @default(autoincrement())
+  author    String
+  phrase    String
+  image_url String?
+}
+```
+
+## Ejemplo de Uso del Cliente Prisma
+```typescript
+// Importar el cliente Prisma
+import { PrismaClient } from '@prisma/client'
+const prisma = new PrismaClient()
+
+// Obtener una frase aleatoria
+async function getRandomPhrase() {
+  const count = await prisma.phrase.count()
+  const skip = Math.floor(Math.random() * count)
+  return prisma.phrase.findFirst({
+    skip: skip
+  })
+}
+
+// Obtener todas las frases
+async function getAllPhrases() {
+  return prisma.phrase.findMany()
+}
+```
