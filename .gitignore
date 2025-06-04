@@ -46,6 +46,7 @@ next-env.d.ts
 .gitignore
 .codegpt
 postgres
+.env
 .env*.local
 .env*.production
 
