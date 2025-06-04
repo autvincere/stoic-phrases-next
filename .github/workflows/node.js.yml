@@ -119,6 +119,10 @@ jobs:
           cat server.log
           exit 1
         }
+      env:
+        DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
+        NODE_ENV: test
+        CI: true
         
     - name: Run integration tests
       run: NODE_ENV=test npx dotenv -e .env.test -- npm run test:integration

@@ -17,10 +17,12 @@ console.log(
 );
 
 // Asegurarse de que no usemos credenciales equivocadas accidentalmente
+// Solo en desarrollo local, no en test (CI)
 if (
   env === 'development' &&
   process.env.DATABASE_URL &&
-  process.env.DATABASE_URL.includes('test_user')
+  process.env.DATABASE_URL.includes('test_user') &&
+  !process.env.CI // No aplicar en CI
 ) {
   console.warn(
     '[Prisma] ⚠️ ADVERTENCIA: Estás usando credenciales de test en entorno de desarrollo',
@@ -32,9 +34,9 @@ if (
 let prisma: PrismaClient;
 
 if (env === 'test') {
-  // Para tests, usamos una instancia específica con databaseUrl mock
-  // Esta instancia no debe intentar conectarse a la base de datos real
-  console.log('[Prisma] Usando configuración para TESTS (no conecta a BD real)');
+  // Para tests, usamos una instancia específica que sí conecta a la BD de test
+  console.log('[Prisma] Usando configuración para TESTS');
+  console.log(`[Prisma] DATABASE_URL en test: ${process.env.DATABASE_URL ? process.env.DATABASE_URL.replace(/:[^:@]+@/, ':****@') : 'No definida'}`);
   prisma = new PrismaClient();
 } else if (env === 'production') {
   // En producción, siempre creamos una nueva instancia
