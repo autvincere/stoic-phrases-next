@@ -23,6 +23,11 @@ cleanup() {
     rm server.pid
   fi
   
+  if [ -f server.log ]; then
+    echo "Removing server log file..."
+    rm server.log
+  fi
+  
   if [ -f .env.test ]; then
     echo "Removing test environment file..."
     rm .env.test
@@ -71,7 +76,7 @@ else
 fi
 
 echo -e "\n${YELLOW}🚀 Step 7: Start Next.js server${NC}"
-NODE_ENV=test npx dotenv -e .env.test -- npm run dev > server.log 2>&1 &
+NODE_ENV=test npx dotenv -e .env.test -- npm run dev:test > server.log 2>&1 &
 echo $! > server.pid
 echo "✅ Next.js server started in background"
 

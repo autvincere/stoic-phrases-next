@@ -87,7 +87,7 @@ jobs:
     # Tests de integración requieren servidor corriendo
     - name: Start Next.js server in background
       run: |
-        NODE_ENV=test npx dotenv -e .env.test -- npm run dev > server.log 2>&1 &
+        NODE_ENV=test npx dotenv -e .env.test -- npm run dev:test > server.log 2>&1 &
         echo $! > server.pid
       env:
         DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_db
